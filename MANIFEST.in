@@ -3,3 +3,4 @@ include pyproject.toml
 include LICENSE
 recursive-include fastapi_rest_utils *.py
 recursive-include fastapi_rest_utils *.pyi 
+recursive-include tests * 

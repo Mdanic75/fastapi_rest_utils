@@ -1,6 +1,7 @@
+"""Router utilities for fastapi-rest-utils, including RestRouter and router_from_viewset."""
 from fastapi import APIRouter
 from typing import Optional, List, Type
-from .viewsets.protocols import BaseViewSetProtocol
+from fastapi_rest_utils.protocols import BaseViewSetProtocol
 
 
 class RestRouter(APIRouter):

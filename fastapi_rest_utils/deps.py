@@ -1,3 +1,4 @@
+"""Dependency utilities for fastapi-rest-utils."""
 from fastapi import Request, Depends
 
 

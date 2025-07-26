@@ -1,7 +1,9 @@
-from .protocols import ViewProtocol, RouteConfigDict, BaseViewSetProtocol
+"""Base viewsets for fastapi-rest-utils."""
+from fastapi_rest_utils.protocols import ViewProtocol, RouteConfigDict, BaseViewSetProtocol
 from typing import Dict, Any, List, Callable
 from fastapi import Request
 from pydantic import BaseModel
+
 
 class ListView(ViewProtocol):
     """
@@ -182,11 +184,10 @@ class BaseViewSet(BaseViewSetProtocol):
 
     def routes_config(self) -> List[RouteConfigDict]:
         routes: List[RouteConfigDict] = []
-        for base in self.__bases__:
-            if issubclass(base, ViewProtocol) and base is not ViewProtocol:
-                route_config = getattr(base, "route_config", None)
-                if callable(route_config):
-                    config = route_config(base)
-                    if config:
-                        routes.append(config)
+        for base in self.__class__.__bases__:
+            route_config = getattr(base, "route_config", None)
+            if callable(route_config):
+                config = route_config()
+                if config:
+                    routes.append(config)
         return routes 

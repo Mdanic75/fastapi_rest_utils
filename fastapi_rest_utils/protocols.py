@@ -1,3 +1,4 @@
+"""Protocols for fastapi-rest-utils viewsets and router interfaces."""
 from typing import Protocol, Any, List, TypedDict, Callable, Optional, Dict
 
 class RouteConfigDictBase(TypedDict):
@@ -24,7 +25,7 @@ class ViewProtocol(Protocol):
     The schema_config attribute stores configuration such as response schemas, e.g. {"list": {"response": MySchema}}.
     """
     schema_config: Dict[str, Any]
-
+    
     @classmethod
     def route_config(cls) -> RouteConfigDict: ...
 

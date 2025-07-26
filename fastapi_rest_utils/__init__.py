@@ -1,20 +1,19 @@
-"""
-FastAPI REST Utils - Utilities for building REST APIs with FastAPI
-"""
+"""Main package for fastapi-rest-utils."""
 
 __version__ = "0.1.0"
 
-from .deps import get_db
-from .router import router_from_viewset
-from .viewsets.base import BaseViewSet as ViewSet
-from .viewsets.base import BaseViewSet
-from .viewsets.sqlalchemy import SQLAlchemyViewSet
+from fastapi_rest_utils.deps import db_dep_injector, auth_dep_injector
+from fastapi_rest_utils.router import RestRouter
+from fastapi_rest_utils.viewsets.base import BaseViewSet as ViewSet
+from fastapi_rest_utils.viewsets.base import BaseViewSet
+from fastapi_rest_utils.viewsets.sqlalchemy import ModelViewSet
 
 __all__ = [
     "__version__",
     "ViewSet",
     "BaseViewSet", 
-    "SQLAlchemyViewSet",
-    "router_from_viewset",
-    "get_db",
+    "ModelViewSet",
+    "RestRouter",
+    "db_dep_injector",
+    "auth_dep_injector",
 ]
