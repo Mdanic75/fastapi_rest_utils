@@ -1,7 +1,7 @@
 """Router utilities for fastapi-rest-utils, including RestRouter and router_from_viewset."""
 from fastapi import APIRouter
 from typing import Optional, List, Type
-from fastapi_rest_utils.protocols import BaseViewSetProtocol
+from fastapi_rest_utils.protocols import ViewProtocol
 
 
 class RestRouter(APIRouter):
@@ -13,7 +13,7 @@ class RestRouter(APIRouter):
 
     def register_viewset(
         self, 
-        viewset_class: Type[BaseViewSetProtocol], 
+        viewset_class: Type[ViewProtocol], 
         prefix: str, 
         tags: Optional[List[str]] = None,
         **kwargs
@@ -34,7 +34,7 @@ class RestRouter(APIRouter):
             endpoint = getattr(viewset, route_config['endpoint_name'])
             path = f"{prefix}{route_config['path']}"
             response_model = route_config.get('response_model')
-            
+
             openapi_extra = route_config.get('openapi_extra')
             route_dependencies = route_config.get('dependencies', [])
             kwargs_dependencies = kwargs.pop("dependencies", [])

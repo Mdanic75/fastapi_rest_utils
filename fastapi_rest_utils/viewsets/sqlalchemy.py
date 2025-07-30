@@ -1,36 +1,32 @@
 """SQLAlchemy viewsets for fastapi-rest-utils."""
-from .base import ListView, RetrieveView, CreateView, UpdateView, PartialUpdateView, DeleteView, BaseViewSet
+from abc import abstractmethod
+from .base import ListView, RetrieveView, CreateView, UpdateView, DeleteView, BaseView
 from fastapi import Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update as sa_update, delete as sa_delete
-from typing import Any, Callable, List
+from typing import Any
 
 
-class SQLAlchemyBaseViewSet(BaseViewSet):
-    """
-    Base SQLAlchemy viewset that requires a model and database dependency.
-    Inherit from this class and from any SQLAlchemy view classes (e.g., SQLAlchemyListView, SQLAlchemyRetrieveView, etc.).
-    """
-    model: Any
-    dependency: List[Callable[..., AsyncSession]]
+class SQLAlchemyBaseView(BaseView):
+    @property
+    @abstractmethod
+    def model(self) -> Any: ...
 
 
-class SQLAlchemyListView(ListView):
+class SQLAlchemyListView(SQLAlchemyBaseView, ListView):
     """
     SQLAlchemy implementation of ListView. Requires 'model' attribute to be set.
-    """
-    model: Any
+    """ 
 
-    async def get_objects(self, request: Request, *args, **kwargs) -> Any:
+    async def get_objects(self, request: Request) -> Any:
         db: AsyncSession = request.state.db
         stmt = select(self.model)
         result = await db.execute(stmt)
         return result.scalars().all()
 
-class SQLAlchemyRetrieveView(RetrieveView):
-    model: Any
+class SQLAlchemyRetrieveView(SQLAlchemyBaseView, RetrieveView):
 
-    async def get_object(self, request: Request, id: Any, *args, **kwargs) -> Any:
+    async def get_object(self, request: Request, id: Any) -> Any:
         db: AsyncSession = request.state.db
         stmt = select(self.model).where(self.model.id == id)
         result = await db.execute(stmt)
@@ -40,10 +36,10 @@ class SQLAlchemyRetrieveView(RetrieveView):
             raise HTTPException(status_code=404, detail="Object not found")
         return obj
 
-class SQLAlchemyCreateView(CreateView):
+class SQLAlchemyCreateView(SQLAlchemyBaseView, CreateView):
     model: Any
 
-    async def create_object(self, request: Request, payload: Any, *args, **kwargs) -> Any:
+    async def create_object(self, request: Request, payload: Any) -> Any:
         db: AsyncSession = request.state.db
         obj = self.model(**payload)
         db.add(obj)
@@ -51,10 +47,9 @@ class SQLAlchemyCreateView(CreateView):
         await db.refresh(obj)
         return obj
 
-class SQLAlchemyUpdateView(UpdateView):
-    model: Any
+class SQLAlchemyUpdateView(SQLAlchemyBaseView, UpdateView):
 
-    async def update_object(self, request: Request, id: Any, payload: Any, *args, **kwargs) -> Any:
+    async def update_object(self, request: Request, id: Any, payload: Any) -> Any:
         db: AsyncSession = request.state.db
         stmt = sa_update(self.model).where(self.model.id == id).values(**payload).returning(self.model)
         result = await db.execute(stmt)
@@ -65,17 +60,16 @@ class SQLAlchemyUpdateView(UpdateView):
         await db.commit()
         return obj
 
-class SQLAlchemyDeleteView(DeleteView):
-    model: Any
+class SQLAlchemyDeleteView(SQLAlchemyBaseView, DeleteView):
 
-    async def delete_object(self, request: Request, id: Any, *args, **kwargs) -> Any:
+    async def delete_object(self, request: Request, id: Any) -> Any:
         db: AsyncSession = request.state.db
         stmt = sa_delete(self.model).where(self.model.id == id)
         await db.execute(stmt)
         await db.commit()
         return {"status": status.HTTP_204_NO_CONTENT} 
 
-class ModelViewSet(SQLAlchemyBaseViewSet, ListView, RetrieveView, CreateView, UpdateView, DeleteView):
+class ModelViewSet(ListView, RetrieveView, CreateView, UpdateView, DeleteView):
     """
     SQLAlchemy implementation of ModelViewSet.
     """
