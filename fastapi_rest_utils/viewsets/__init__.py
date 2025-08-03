@@ -1,18 +1,18 @@
 """Viewsets subpackage for fastapi-rest-utils."""
 
 from fastapi_rest_utils.viewsets.base import (
-    ListView,
-    RetrieveView,
     CreateView,
-    UpdateView,
-    PartialUpdateView,
     DeleteView,
+    ListView,
+    PartialUpdateView,
+    RetrieveView,
+    UpdateView,
 )
 from fastapi_rest_utils.viewsets.sqlalchemy import ModelViewSet
 
 __all__ = [
     "ListView",
-    "RetrieveView", 
+    "RetrieveView",
     "CreateView",
     "UpdateView",
     "PartialUpdateView",

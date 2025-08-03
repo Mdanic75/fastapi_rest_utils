@@ -1,8 +1,9 @@
+from typing import Any, Dict, List, Type
+from unittest.mock import AsyncMock, Mock
+
 import pytest
-from unittest.mock import Mock, AsyncMock
-from typing import List, Dict, Any, Type
-from pydantic import BaseModel
 from fastapi import Request
+from pydantic import BaseModel
 
 
 class TestProductSchema(BaseModel):
@@ -21,14 +22,12 @@ class TestProductUpdateSchema(BaseModel):
     price: float | None = None
 
 
-
-
 @pytest.fixture
 def mock_viewset_data() -> List[Dict[str, Any]]:
     """Mock data for viewset tests"""
     return [
         {"id": 1, "name": "Product 1", "price": 10.0},
-        {"id": 2, "name": "Product 2", "price": 20.0}
+        {"id": 2, "name": "Product 2", "price": 20.0},
     ]
 
 
@@ -46,15 +45,16 @@ def mock_async_dependency() -> AsyncMock:
 
 class MockViewSetWithRoutes:
     """Minimal mock with only routes_config method"""
+
     dependency: List[Any] = []
-    
+
     def routes_config(self) -> List[Dict[str, Any]]:
         return [
             {
                 "path": "",
                 "method": "GET",
                 "endpoint_name": "test",
-                "response_model": TestProductSchema
+                "response_model": TestProductSchema,
             },
             {
                 "path": "/",
@@ -70,8 +70,8 @@ class MockViewSetWithRoutes:
                             }
                         }
                     }
-                }
-            }
+                },
+            },
         ]
 
     def test(self, *args: Any, **kwargs: Any) -> None:
@@ -79,6 +79,7 @@ class MockViewSetWithRoutes:
 
     def create(self, *args: Any, **kwargs: Any) -> None:
         pass
+
 
 @pytest.fixture
 def mock_viewset_with_routes() -> Type[MockViewSetWithRoutes]:
