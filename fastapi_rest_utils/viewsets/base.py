@@ -13,7 +13,8 @@ class BaseView(ViewProtocol):
     """
     @property
     @abstractmethod
-    def schema_config(self) -> Dict[str, Any]: ...
+    def schema_config(self) -> Dict[str, Any]:
+        ...
 
     def routes_config(self) -> List[RouteConfigDict]:
         return []

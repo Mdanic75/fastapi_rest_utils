@@ -1,7 +1,10 @@
 from fastapi_rest_utils.router import RestRouter
+from typing import Type
+from fastapi_rest_utils.protocols import ViewProtocol
+from conftest import MockViewSetWithRoutes
 
 
-def test_router_registers_routes_and_openapi(mock_viewset_with_routes):
+def test_router_registers_routes_and_openapi(mock_viewset_with_routes: Type[ViewProtocol]) -> None:
     router = RestRouter()
     router.register_viewset(mock_viewset_with_routes, "/mock")
 
@@ -10,9 +13,6 @@ def test_router_registers_routes_and_openapi(mock_viewset_with_routes):
     post_route = next((r for r in router.routes if "POST" in getattr(r, "methods", [])), None)
     assert post_route is not None
 
-    if hasattr(post_route, "openapi_extra"):
-        openapi_extra = post_route.openapi_extra
-    else:
-        openapi_extra = getattr(post_route.endpoint, "openapi_extra", None)
+    openapi_extra = getattr(post_route, "openapi_extra", None)
     assert openapi_extra is not None
     assert "requestBody" in openapi_extra

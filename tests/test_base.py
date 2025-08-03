@@ -57,7 +57,7 @@ class InvalidCreateView(CreateView):
     # Missing payload - should raise NotImplementedError
     schema_config = {"create": {"response": TestProductSchema}}
 
-def test_model_viewset_aggregates_all_route_configs():
+def test_model_viewset_aggregates_all_route_configs() -> None:
     vs = ModelViewSet()
     configs = vs.routes_config()
     
@@ -88,7 +88,7 @@ def test_model_viewset_aggregates_all_route_configs():
     delete_config = next(c for c in configs if c["endpoint_name"] == "delete")
     assert delete_config["response_model"] is None
 
-def test_model_viewset_http_methods():
+def test_model_viewset_http_methods() -> None:
     vs = ModelViewSet()
     configs = vs.routes_config()
     
@@ -108,7 +108,7 @@ def test_model_viewset_http_methods():
     delete_config = next(c for c in configs if c["endpoint_name"] == "delete")
     assert delete_config["method"] == "DELETE"
 
-def test_model_viewset_paths():
+def test_model_viewset_paths() -> None:
     vs = ModelViewSet()
     configs = vs.routes_config()
     

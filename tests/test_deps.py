@@ -10,7 +10,7 @@ class TestDependencyInjectors:
 
     
     @pytest.mark.asyncio
-    async def test_db_dep_injector_returns_function(self):
+    async def test_db_dep_injector_returns_function(self) -> None:
         """Test that db_dep_injector returns a callable function"""
         mock_session_dep = Mock()
         injector = db_dep_injector(mock_session_dep)
@@ -25,7 +25,7 @@ class TestDependencyInjectors:
         assert 'db' in sig.parameters
     
     @pytest.mark.asyncio
-    async def test_auth_dep_injector_returns_function(self):
+    async def test_auth_dep_injector_returns_function(self) -> None:
         """Test that auth_dep_injector returns a callable function"""
         mock_user_dep = Mock()
         injector = auth_dep_injector(mock_user_dep)

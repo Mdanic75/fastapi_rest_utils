@@ -21,11 +21,13 @@ class RouteConfigDict(RouteConfigDictBase, total=False):
 
 class ViewProtocol(ABC):
     """
-    Protocol for a view that must provide a schema_config attribute and a classmethod route_config.
-    The route_config classmethod returns a RouteConfigDict representing keyword arguments to be passed to the router.
-    The schema_config attribute stores configuration such as response schemas, e.g. {"list": {"response": MySchema}}.
+    Protocol for a view that must provide a schema_config property and a routes_config method.
+    The routes_config method returns a RouteConfigDict representing keyword arguments to be passed to the router.
+    The schema_config property stores configuration such as response schemas, e.g. {"list": {"response": MySchema}}.
     """
-    schema_config: Dict[str, Any]
+    @property
+    @abstractmethod
+    def schema_config(self) -> Dict[str, Any]: ...
     
     @abstractmethod
     def routes_config(self) -> List[RouteConfigDict]: ...
@@ -38,4 +40,5 @@ class RouterProtocol(ABC):
     # @abstractmethod
     # def register_view(self, view: ViewProtocol, *args, **kwargs) -> None: ...
     @abstractmethod
-    def register_viewset(self, viewset: Type[ViewProtocol], *args, **kwargs) -> None: ... 
+    def register_viewset(self, viewset: Type[ViewProtocol], *args: Any, **kwargs: Any) -> None: 
+        NotImplementedError("register_viewset must be implemented by the subclass")

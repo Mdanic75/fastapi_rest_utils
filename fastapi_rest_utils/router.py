@@ -1,6 +1,7 @@
 """Router utilities for fastapi-rest-utils, including RestRouter and router_from_viewset."""
 from fastapi import APIRouter
-from typing import Optional, List, Type
+from typing import Optional, List, Type, Any
+from enum import Enum
 from fastapi_rest_utils.protocols import ViewProtocol
 
 
@@ -15,16 +16,16 @@ class RestRouter(APIRouter):
         self, 
         viewset_class: Type[ViewProtocol], 
         prefix: str, 
-        tags: Optional[List[str]] = None,
-        **kwargs
+        tags: Optional[List[str | Enum]] = None,
+        **kwargs: Any
     ) -> None:
         """
         Register the viewset's routes with this router.
 
         Args:
-            viewset_class (Type[BaseViewSetProtocol]): The viewset class containing route configurations.
+            viewset_class (Type[ViewProtocol]): The viewset class containing route configurations.
             prefix (str): The URL prefix for the viewset.
-            tags (Optional[List[str]]): Tags for API documentation purposes.
+            tags (Optional[List[str | Enum]]): Tags for API documentation purposes.
             **kwargs: Additional keyword arguments passed to add_api_route.
         """
         viewset = viewset_class()
