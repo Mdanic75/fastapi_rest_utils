@@ -19,9 +19,7 @@ class SQLAlchemyBaseView(BaseView):
 
 
 class SQLAlchemyListView(SQLAlchemyBaseView, ListView):
-    """
-    SQLAlchemy implementation of ListView. Requires 'model' attribute to be set.
-    """
+    """SQLAlchemy implementation of ListView. Requires 'model' attribute to be set."""
 
     async def get_objects(self, request: Request) -> Any:
         db: AsyncSession = request.state.db
@@ -31,7 +29,6 @@ class SQLAlchemyListView(SQLAlchemyBaseView, ListView):
 
 
 class SQLAlchemyRetrieveView(SQLAlchemyBaseView, RetrieveView):
-
     async def get_object(self, request: Request, id: Any) -> Any:
         db: AsyncSession = request.state.db
         stmt = select(self.model).where(self.model.id == id)
@@ -57,15 +54,9 @@ class SQLAlchemyCreateView(SQLAlchemyBaseView, CreateView):
 
 
 class SQLAlchemyUpdateView(SQLAlchemyBaseView, UpdateView):
-
     async def update_object(self, request: Request, id: Any, payload: Any) -> Any:
         db: AsyncSession = request.state.db
-        stmt = (
-            sa_update(self.model)
-            .where(self.model.id == id)
-            .values(**payload)
-            .returning(self.model)
-        )
+        stmt = sa_update(self.model).where(self.model.id == id).values(**payload).returning(self.model)
         result = await db.execute(stmt)
         obj = result.scalar_one_or_none()
         if obj is None:
@@ -77,7 +68,6 @@ class SQLAlchemyUpdateView(SQLAlchemyBaseView, UpdateView):
 
 
 class SQLAlchemyDeleteView(SQLAlchemyBaseView, DeleteView):
-
     async def delete_object(self, request: Request, id: Any) -> Any:
         db: AsyncSession = request.state.db
         stmt = sa_delete(self.model).where(self.model.id == id)
@@ -86,7 +76,7 @@ class SQLAlchemyDeleteView(SQLAlchemyBaseView, DeleteView):
         return {"status": status.HTTP_204_NO_CONTENT}
 
 
-class ModelViewSet(ListView, RetrieveView, CreateView, UpdateView, DeleteView):
-    """
-    SQLAlchemy implementation of ModelViewSet.
-    """
+class ModelViewSet(
+    SQLAlchemyListView, SQLAlchemyRetrieveView, SQLAlchemyCreateView, SQLAlchemyUpdateView, SQLAlchemyDeleteView
+):
+    """SQLAlchemy implementation of ModelViewSet."""
