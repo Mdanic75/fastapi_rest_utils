@@ -8,10 +8,10 @@ from fastapi_rest_utils.viewsets.base import BaseView
 from fastapi_rest_utils.viewsets.sqlalchemy import ModelViewSet
 
 __all__ = [
-    "__version__",
     "BaseView",
     "ModelViewSet",
     "RestRouter",
-    "db_dep_injector",
+    "__version__",
     "auth_dep_injector",
+    "db_dep_injector",
 ]

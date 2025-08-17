@@ -1,7 +1,6 @@
 """Router utilities for fastapi-rest-utils, including RestRouter and router_from_viewset."""
 
 from enum import Enum
-from typing import Any
 
 from fastapi import APIRouter
 
@@ -19,7 +18,7 @@ class RestRouter(APIRouter):
         viewset_class: type[ViewProtocol],
         prefix: str,
         tags: list[str | Enum] | None = None,
-        **kwargs: Any,
+        **kwargs: dict,
     ) -> None:
         """Register the viewset's routes with this router.
 
@@ -34,14 +33,14 @@ class RestRouter(APIRouter):
         routes_config = viewset.routes_config()
 
         for route_config in routes_config:
-            route_kwargs = kwargs.copy()
+            route_kwargs: dict = kwargs.copy()
             endpoint = getattr(viewset, route_config["endpoint_name"])
             path = f"{prefix}{route_config['path']}"
             response_model = route_config.get("response_model")
 
             openapi_extra = route_config.get("openapi_extra")
             route_dependencies = route_config.get("dependencies", [])
-            kwargs_dependencies = route_kwargs.pop("dependencies", [])
+            kwargs_dependencies: list = list(route_kwargs.pop("dependencies", []))
             all_dependencies = route_dependencies + kwargs_dependencies
 
             self.add_api_route(

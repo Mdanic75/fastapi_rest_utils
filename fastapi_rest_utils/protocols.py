@@ -1,10 +1,13 @@
 """Protocols for fastapi-rest-utils viewsets and router interfaces."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Type, TypedDict
+from enum import Enum
+from typing import Any, TypedDict
 
 
 class RouteConfigDictBase(TypedDict):
+    """Base configuration for API routes."""
+
     path: str
     method: str
     endpoint_name: str
@@ -12,8 +15,10 @@ class RouteConfigDictBase(TypedDict):
 
 
 class RouteConfigDict(RouteConfigDictBase, total=False):
-    dependencies: List[Any]
-    tags: List[str]
+    """Extended route configuration with optional fields."""
+
+    dependencies: list
+    tags: list[str]
     openapi_extra: dict
     name: str
     summary: str
@@ -24,29 +29,34 @@ class RouteConfigDict(RouteConfigDictBase, total=False):
 
 
 class ViewProtocol(ABC):
-    """
-    Protocol for a view that must provide a schema_config property and a routes_config method.
+    """Protocol for a view that must provide a schema_config property and a routes_config method.
+
     The routes_config method returns a RouteConfigDict representing keyword arguments to be passed to the router.
     The schema_config property stores configuration such as response schemas, e.g. {"list": {"response": MySchema}}.
     """
 
     @property
     @abstractmethod
-    def schema_config(self) -> Dict[str, Any]: ...
+    def schema_config(self) -> dict[str, Any]:
+        """Mandatory attribute that must return the schema configuration for the view."""
+        ...
 
     @abstractmethod
-    def routes_config(self) -> List[RouteConfigDict]: ...
+    def routes_config(self) -> list[RouteConfigDict]:
+        """Return the routes configuration for the view."""
+        ...
 
 
 class RouterProtocol(ABC):
-    """
-    Protocol for an extended APIRouter that must implement register_view and register_viewset methods.
-    """
+    """Protocol for an extended APIRouter that must implement register_view and register_viewset methods."""
 
-    # @abstractmethod
-    # def register_view(self, view: ViewProtocol, *args, **kwargs) -> None: ...
     @abstractmethod
     def register_viewset(
-        self, viewset: Type[ViewProtocol], *args: Any, **kwargs: Any
+        self,
+        viewset_class: type[ViewProtocol],
+        prefix: str,
+        tags: list[str | Enum] | None = None,
+        **kwargs: dict,
     ) -> None:
-        NotImplementedError("register_viewset must be implemented by the subclass")
+        """Register the viewset's routes with this router."""
+        ...
